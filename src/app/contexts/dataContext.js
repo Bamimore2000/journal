@@ -16,29 +16,33 @@ export const DataContextComp = ({children}) => {
     const [wantsBookMarked, setWantsBookMarks] = useState(false)
 
     const  setItem = (data)=>{
+      if (typeof window !== 'undefined'){
         let stringified = JSON.stringify(data);
-        if (typeof localStorage != undefined){
+        if (typeof localStorage !== undefined){
           localStorage.setItem('journals', stringified);
         }
-        
+      } 
       };
 
       
     
       const getItem = ()=>{
-        if (typeof localStorage != undefined){
-          const itemWanted = localStorage.getItem('journals');
-          const itemGotten = JSON.parse(itemWanted);
-          if (itemGotten?.length > 1){
-            itemGotten.sort((a, b) => {
-              return b.time - a.time
-            })
+        if (typeof window !== 'undefined'){
+          if (typeof localStorage != undefined){
+            const itemWanted = localStorage.getItem('journals');
+            const itemGotten = JSON.parse(itemWanted);
+            if (itemGotten?.length > 1){
+              itemGotten.sort((a, b) => {
+                return b.time - a.time
+              })
+            }
+            else{
+              return itemGotten
+            }
+            return itemGotten;
           }
-          else{
-            return itemGotten
-          }
-          return itemGotten;
         }
+        
         
       }
     
