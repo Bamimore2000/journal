@@ -88,7 +88,7 @@ div.button, .btn{
   max-width: 768px;
   transform: translateX(50%);
   right: 50%;
-  height: calc(100vh - 60px);
+  height: 80vh;
   border-top-right-radius: 20px;
   border-top-left-radius: 20px;
   background-color: rgb(50, 45, 45);
