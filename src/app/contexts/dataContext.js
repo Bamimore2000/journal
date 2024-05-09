@@ -17,23 +17,29 @@ export const DataContextComp = ({children}) => {
 
     const  setItem = (data)=>{
         let stringified = JSON.stringify(data);
-        localStorage.setItem('journals', stringified);
+        if (typeof localStorage != undefined){
+          localStorage.setItem('journals', stringified);
+        }
+        
       };
 
       
     
       const getItem = ()=>{
-        const itemWanted = localStorage.getItem('journals');
-        const itemGotten = JSON.parse(itemWanted);
-        if (itemGotten?.length > 1){
-          itemGotten.sort((a, b) => {
-            return b.time - a.time
-          })
+        if (typeof localStorage != undefined){
+          const itemWanted = localStorage.getItem('journals');
+          const itemGotten = JSON.parse(itemWanted);
+          if (itemGotten?.length > 1){
+            itemGotten.sort((a, b) => {
+              return b.time - a.time
+            })
+          }
+          else{
+            return itemGotten
+          }
+          return itemGotten;
         }
-        else{
-          return itemGotten
-        }
-        return itemGotten;
+        
       }
     
 
