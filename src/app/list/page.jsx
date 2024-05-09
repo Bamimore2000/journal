@@ -1,3 +1,4 @@
+
 "use client";
 import { useContext, useEffect, useRef, useState } from "react";
 import DataContext from "../contexts/dataContext";
@@ -43,9 +44,12 @@ const Page = () => {
   const [previous, setPrevious] = useState(0);
   const [photos, setPhotos] = useState(undefined)
 
-  window.addEventListener("DOMContentLoaded", () => {
-    setRender(getItem());
-  });
+  if (typeof window !== 'undefined'){
+    window.addEventListener("DOMContentLoaded", () => {
+      setRender(getItem());
+    });
+  }
+  
 
   useEffect(() => {
     setRender(() => {
@@ -149,30 +153,33 @@ const Page = () => {
 
   // this function
   const set = (id, index) => {
-    const divToAccess = divRefs.current[index];
-    let rect = divToAccess.getBoundingClientRect();
-    let percent = (rect.top / window.innerWidth) * 100;
-    // if the item is in the top 50% of the screen
-    if (percent > 50) {
-      setIsTop(true);
-    } else {
-      setIsTop(false);
+    if (typeof window !== 'undefined'){
+      const divToAccess = divRefs.current[index];
+      let rect = divToAccess.getBoundingClientRect();
+      let percent = (rect.top / window.innerWidth) * 100;
+      // if the item is in the top 50% of the screen
+      if (percent > 50) {
+        setIsTop(true);
+      } else {
+        setIsTop(false);
+      }
+      //ensures that the subdiv shows up
+      setEditId(id);
+      // this set the id to keep track of the div clicked
+      setPrevious(id);
+      setShowModal((prev) => !prev);
+  
+      // if the subdiv is not visible anywhere, show it
+      // if (!showModal) {
+      //   setShowModal(true);
+      // }
+      // removed because thier feature is different
+      // if the subdiv is visible but the same div is clicked again, remove the subdiv
+      // if (showModal && previous === id) {
+      //   setShowModal(false);
+      // }
     }
-    //ensures that the subdiv shows up
-    setEditId(id);
-    // this set the id to keep track of the div clicked
-    setPrevious(id);
-    setShowModal((prev) => !prev);
-
-    // if the subdiv is not visible anywhere, show it
-    // if (!showModal) {
-    //   setShowModal(true);
-    // }
-    // removed because thier feature is different
-    // if the subdiv is visible but the same div is clicked again, remove the subdiv
-    // if (showModal && previous === id) {
-    //   setShowModal(false);
-    // }
+    
   };
 
   // useEffect(()=>{
