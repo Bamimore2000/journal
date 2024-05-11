@@ -66,6 +66,7 @@ div.button, .btn{
   right: 50%;
   z-index: 60;
   position: fixed;
+  cursor: pointer;
 
 }
 
@@ -340,10 +341,13 @@ div.photos{
 .link-journal:hover{
   background-color: rgb(108, 18, 173);
 }
+.bookmarkbtn{
+  cursor: pointer;
+}
 
 .done{
   cursor: pointer;
 }
-.bookmarkbtn{
-  cursor: pointer;
+.journal-home{
+  padding-bottom: 20px;
 }
