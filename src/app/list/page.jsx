@@ -1,4 +1,5 @@
 "use client";
+import { motion } from "framer-motion";
 import { useContext, useEffect, useRef, useState } from "react";
 import DataContext from "../contexts/dataContext";
 import Input from "@/components/input/input";
@@ -62,23 +63,21 @@ const Page = () => {
 
   const [divsClicked, setDivsClicked] = useState([]);
 
-
   // function to show more text
-  const showText = (id) =>{
-    if (divsClicked.includes(id)){
-      setDivsClicked((prev)=>{
-        const filtered = prev.filter((data)=>{
+  const showText = (id) => {
+    if (divsClicked.includes(id)) {
+      setDivsClicked((prev) => {
+        const filtered = prev.filter((data) => {
           return data !== id;
-        })
-        return filtered
-      })
+        });
+        return filtered;
+      });
+    } else {
+      setDivsClicked((prev) => {
+        return [...prev, id];
+      });
     }
-    else{
-      setDivsClicked((prev)=>{
-        return [...prev, id]
-      })
-    }
-  }
+  };
 
   //   function to edit
   const editingValue = (id) => {
@@ -321,7 +320,6 @@ const Page = () => {
                     )}
                     <div className="text-itself">
                       <h4>{data.value}</h4>
-                      
                     </div>
                     <div className="date">
                       <div className="actual-date">{data.id}</div>
@@ -356,7 +354,10 @@ const Page = () => {
                   className="journal "
                 >
                   {editId === data?.code && showModal && previous != null && (
-                    <div
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.5 }} // Initial state: hidden with smaller scale
+                      animate={{ opacity: 1, scale: 1 }} // Final state: visible with normal scale
+                      transition={{ duration: 0.3 }}
                       style={{ top: isTop && "-19%" }}
                       className="edit-book-del"
                     >
@@ -386,17 +387,23 @@ const Page = () => {
                       <div
                         onClick={() => deleting(data.code)}
                         className="delete"
-                        
                       >
                         <h3>Delete</h3>
                         <div className="bin"></div>
                       </div>
-                    </div>
+                    </motion.div>
                   )}
-                  <div onClick={()=> showText(data.code)} className="text-itself">
-                    <h4>{data.value.length > maxLength? (
-                      divsClicked.includes(data.code) ?  data.value: `${data.value.slice(0, maxLength)}...`
-                    ): data.value}</h4>
+                  <div
+                    onClick={() => showText(data.code)}
+                    className="text-itself"
+                  >
+                    <h4>
+                      {data.value.length > maxLength
+                        ? divsClicked.includes(data.code)
+                          ? data.value
+                          : `${data.value.slice(0, maxLength)}...`
+                        : data.value}
+                    </h4>
                     {console.log(data.value.length)}
                   </div>
                   <div className="date">

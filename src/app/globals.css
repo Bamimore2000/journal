@@ -189,7 +189,6 @@ div.button, .btn{
   background-color: #342e2e;
   height: 90px;
   width: 200px;
-  transition: all 1s ease-in-out;
   right: 0;
   top:  calc(100% + 5px);
   border-radius: 10px;
