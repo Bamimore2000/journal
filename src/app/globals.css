@@ -182,6 +182,7 @@ div.button, .btn{
 
 .edit{
   display: flex;
+  cursor: pointer;
 }
 
 .edit-book-del{
@@ -205,7 +206,7 @@ div.button, .btn{
 }
 
 .bookmark{
-  border-bottom: #363535 7px solid;
+  border-bottom: #363535 4px solid;
 }
 
 .delete{
@@ -243,6 +244,7 @@ div.blur{
   bottom: 0;
   backdrop-filter: blur(1px);
   z-index: 59;
+  pointer-events: none;
 }
 
 .three{
@@ -337,4 +339,11 @@ div.photos{
 }
 .link-journal:hover{
   background-color: rgb(108, 18, 173);
+}
+
+.done{
+  cursor: pointer;
+}
+.bookmarkbtn{
+  cursor: pointer;
 }

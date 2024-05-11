@@ -172,7 +172,7 @@ const Input = ({}) => {
         </div>
       )}
       <nav>
-        <div onClick={()=> handleBookmark()} className="bookmark">
+        <div onClick={()=> handleBookmark()} className="bookmarkbtn">
           {!wantsBookMarked ? (
             'set bookmark'
           ):(
