@@ -1,4 +1,3 @@
-
 "use client";
 import { useContext, useEffect, useRef, useState } from "react";
 import DataContext from "../contexts/dataContext";
@@ -7,28 +6,24 @@ import Input from "@/components/input/input";
 const Page = () => {
   const divRefs = useRef([]);
   let {
-    array,
     query,
     setQuery,
-    saver,
     setSaver,
-    oneToEdit,
     setOneToEdit,
-    editing,
     getItem,
     setItem,
     isEditing,
     showModal,
-    wantsBookMarked,
     setWantsBookMarks,
-    bookmarked, 
+    bookmarked,
     setIsBookMarked,
     setShowModal,
   } = useContext(DataContext);
 
   const [enough, setEnough] = useState(false);
+  const maxLength = 300;
+  const [overflow, setHasOverFlow] = useState(false);
 
-  
   const [render, setRender] = useState(() => {
     const filteredJournal = getItem()?.filter((data) => {
       return data.hasSaved != false;
@@ -39,17 +34,16 @@ const Page = () => {
   const divRef = useRef(null);
   const [isTop, setIsTop] = useState(true);
   // const [bookmarked, setIsBookMarked] = useState(false);
-  const [displayBookmarks, setDisplayBookmarks] = useState(false);
+  const [textHolder, setTextHolder] = useState(false);
   // takes the id of the journal article clicked
   const [previous, setPrevious] = useState(0);
-  const [photos, setPhotos] = useState(undefined)
+  const [photos, setPhotos] = useState(undefined);
 
-  if (typeof window !== 'undefined'){
+  if (typeof window !== "undefined") {
     window.addEventListener("DOMContentLoaded", () => {
       setRender(getItem());
     });
   }
-  
 
   useEffect(() => {
     setRender(() => {
@@ -60,13 +54,31 @@ const Page = () => {
     });
   }, [showModal]);
 
-  console.log(getItem());
-
   // handling second modal
   const handleSecondModal = () => {
     setPrevious(null);
     setShowModal((prev) => !prev);
   };
+
+  const [divsClicked, setDivsClicked] = useState([]);
+
+
+  // function to show more text
+  const showText = (id) =>{
+    if (divsClicked.includes(id)){
+      setDivsClicked((prev)=>{
+        const filtered = prev.filter((data)=>{
+          return data !== id;
+        })
+        return filtered
+      })
+    }
+    else{
+      setDivsClicked((prev)=>{
+        return [...prev, id]
+      })
+    }
+  }
 
   //   function to edit
   const editingValue = (id) => {
@@ -76,13 +88,12 @@ const Page = () => {
     let found = getItem().find((data) => {
       let seen = data.code === id;
 
-      if(data.hasSaved){
-        setWantsBookMarks(true)
+      if (data.hasSaved) {
+        setWantsBookMarks(true);
+      } else {
+        setWantsBookMarks(false);
       }
-      else{
-        setWantsBookMarks(false)
-      }
-      return seen ;
+      return seen;
     });
     // sets the id to onetoedit which is sent to the input component
     // the rest of the editing happens in the input component
@@ -153,7 +164,7 @@ const Page = () => {
 
   // this function
   const set = (id, index) => {
-    if (typeof window !== 'undefined'){
+    if (typeof window !== "undefined") {
       const divToAccess = divRefs.current[index];
       let rect = divToAccess.getBoundingClientRect();
       let percent = (rect.top / window.innerWidth) * 100;
@@ -168,7 +179,7 @@ const Page = () => {
       // this set the id to keep track of the div clicked
       setPrevious(id);
       setShowModal((prev) => !prev);
-  
+
       // if the subdiv is not visible anywhere, show it
       // if (!showModal) {
       //   setShowModal(true);
@@ -179,26 +190,24 @@ const Page = () => {
       //   setShowModal(false);
       // }
     }
-    
   };
 
   // useEffect(()=>{
   //   setRender(getItem())
   // }, [se])
-  useEffect(()=>{
-    getItem()?.map((data)=>{
-      if(data.hasSaved){
-        setEnough(true)
+  useEffect(() => {
+    getItem()?.map((data) => {
+      if (data.hasSaved) {
+        setEnough(true);
+      } else {
+        setEnough(false);
       }
-      else{
-        setEnough(false)
-      }
-    })
-  }, [query, showModal])
+    });
+  }, [query, showModal]);
 
   return (
     <>
-    {query && <Input></Input>}
+      {query && <Input></Input>}
       <div className="container journal-home">
         {/* <header className="container fixed-header">
         {isScrolledPast && (
@@ -220,12 +229,16 @@ const Page = () => {
               <div className="sorted-info">
                 {bookmarked && (
                   <>
-                    <h5 >Filtered by</h5>
-                    <h6 style={{color: "#564fb8"}}>Bookmarked</h6>
+                    <h5>Filtered by</h5>
+                    <h6 style={{ color: "#564fb8" }}>Bookmarked</h6>
                   </>
                 )}
               </div>
-              <div style={{ backgroundColor: bookmarked && "#564fb8" }} onClick={() => handleSecondModal()} className="three">
+              <div
+                style={{ backgroundColor: bookmarked && "#564fb8" }}
+                onClick={() => handleSecondModal()}
+                className="three"
+              >
                 <div className="first"></div>
                 <div className="second"></div>
                 <div className="third"></div>
@@ -234,18 +247,25 @@ const Page = () => {
                 <div className="second-modal">
                   <div onClick={() => handleAll()} className="all-entries">
                     <div className="name-of">All Entries</div>
-                    <div className="icon">{!bookmarked && !photos && 'marked'}</div>
+                    <div className="icon">
+                      {!bookmarked && !photos && "marked"}
+                    </div>
                   </div>
                   {enough && (
-                    <div onClick={() => handleBookmark()} className="bookmarked">
-                    <div className="name-of">Bookmarked</div>
-                    <div className="icon">{bookmarked && !photos && 'marked'}</div>
-                  </div>
+                    <div
+                      onClick={() => handleBookmark()}
+                      className="bookmarked"
+                    >
+                      <div className="name-of">Bookmarked</div>
+                      <div className="icon">
+                        {bookmarked && !photos && "marked"}
+                      </div>
+                    </div>
                   )}
                   <div className="photos">
                     <div className="name-of">Photos</div>
                     <div className="icon">
-                      {!bookmarked && photos && 'marked'}
+                      {!bookmarked && photos && "marked"}
                     </div>
                   </div>
                 </div>
@@ -301,6 +321,7 @@ const Page = () => {
                     )}
                     <div className="text-itself">
                       <h4>{data.value}</h4>
+                      
                     </div>
                     <div className="date">
                       <div className="actual-date">{data.id}</div>
@@ -365,14 +386,18 @@ const Page = () => {
                       <div
                         onClick={() => deleting(data.code)}
                         className="delete"
+                        
                       >
                         <h3>Delete</h3>
                         <div className="bin"></div>
                       </div>
                     </div>
                   )}
-                  <div className="text-itself">
-                    <h4>{data.value}</h4>
+                  <div onClick={()=> showText(data.code)} className="text-itself">
+                    <h4>{data.value.length > maxLength? (
+                      divsClicked.includes(data.code) ?  data.value: `${data.value.slice(0, maxLength)}...`
+                    ): data.value}</h4>
+                    {console.log(data.value.length)}
                   </div>
                   <div className="date">
                     <div className="actual-date">{data.id}</div>
@@ -400,7 +425,6 @@ const Page = () => {
           )}
 
           {}
-          
         </div>
       </div>
     </>

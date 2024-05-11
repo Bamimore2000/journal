@@ -40,7 +40,8 @@ const Input = ({}) => {
   }
 
   // Generate a random word with length 10
-  const randomWord = generateRandomWord(10);
+  
+  
   //   console.log(randomWord);
 
   let data;
@@ -90,6 +91,7 @@ const Input = ({}) => {
       // set the date and time
 
       // create the object to hold that typing session
+      const randomWord = generateRandomWord(10);
       const text = {
         time: now.getTime(),
         id: now.toLocaleString("en-US", options),
