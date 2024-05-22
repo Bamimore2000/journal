@@ -17,6 +17,10 @@ button{
   border: none;
 }
 
+.no-scroll{
+  overflow: hidden;
+}
+
 /* main page */
 .home{
   background: linear-gradient(rgb(31, 35, 49), rgb(92, 53, 91));
@@ -56,8 +60,8 @@ button{
 
 /* button */
 div.button, .btn{
-  height: 60px;
-  width: 60px;
+  height: 75px;
+  width: 75px;
   box-sizing: border-box;
   background-color: var(--primaryclr);
   display: grid;
@@ -92,10 +96,10 @@ div.button, .btn{
   width: 100%;
   max-width: 768px;
   margin: auto;
-  height: 94vh;
+  height: 98vh;
   border-top-right-radius: 20px;
   border-top-left-radius: 20px;
-  background-color: rgb(50, 45, 45);
+  background-color: #1c1c1e;
   z-index: 100;
   bottom: 0;
   padding: 10px;
@@ -191,18 +195,19 @@ div.button, .btn{
 
 .edit-book-del{
   position: absolute;
-  background-color: #342e2e;
-  height:auto;
-  width: 200px;
-  right: 0;
-  top:  calc(100% + 5px);
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  z-index: 70 !important;
-  box-shadow: -5px 3px 8px 16px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
+    background-color: #342e2e;
+    height: auto;
+    padding: 7px;
+    width: 227px;
+    right: 0;
+    top: calc(100% + 5px);
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    z-index: 70 !important;
+    box-shadow: 0px 0px 8px 24px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
 }
 
 .edit-book-del > div{
@@ -246,9 +251,15 @@ div.blur{
   width: 100%;
   position: fixed;
   bottom: 0;
-  backdrop-filter: blur(1px);
   z-index: 59;
   pointer-events: none;
+  box-shadow: 0px 0px 20px ;
+  /* From https://css.glass */
+background: rgba(255, 255, 255, 0);
+
+box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+backdrop-filter: blur(1.7px);
+-webkit-backdrop-filter: blur(1.7px);
 }
 
 .three{

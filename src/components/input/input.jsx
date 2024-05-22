@@ -85,7 +85,8 @@ const Input = ({}) => {
       y: [yStart, 800]
     })
     setQuery(false);
-    setSaver('')
+    setSaver('');
+    setWantsBookMarks(false)
     
   }
   
@@ -116,7 +117,7 @@ const Input = ({}) => {
         id: now.toLocaleString("en-US", options),
         value: saver,
         code: randomWord,
-        hasSaved: !wantsBookMarked ? false : true,
+        hasSaved: false,
       };
 
       // if the user is editing, this is an utility function
@@ -174,14 +175,29 @@ const Input = ({}) => {
       setQuery(false);
       router.push("/list");
       setShowModal(false);
+      setWantsBookMarks(false)
     } else {
       setIsWrong(true);
       setTimeout(() => {
         setIsWrong(false);
-      }, 3000);
+      }, 1000);
       console.log("yes");
     }
   };
+
+  useEffect(()=>{
+    if (query){
+      document.body.classList.add('no-scroll')
+    }
+    if(!query){
+      document.body.classList.remove('no-scroll');
+      console.log(query);
+    }
+
+    return () =>{
+      document.body.classList.remove('no-scroll')
+    }
+  }, [query])
 
   return (
     <motion.div 
@@ -215,6 +231,7 @@ const Input = ({}) => {
     console.log(y.get());
   }}
   dragListener={false}
+  onScroll={(e) => e.stopPropagation()}
 
   dragControls={controls}
   dragConstraints={{
@@ -225,7 +242,7 @@ const Input = ({}) => {
      >
       {isWrong && (
         <div>
-          <h3>Please enter a text</h3>
+          <h3 className="text-red-500">Please enter a text</h3>
         </div>
       )}
       <nav 
