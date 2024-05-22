@@ -1,10 +1,21 @@
 "use client";
-import { motion } from "framer-motion";
+import { FaBookmark } from "react-icons/fa6";
+import { GoBookmarkSlash } from "react-icons/go";
+import { GoBookmark } from "react-icons/go";
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { RiPencilFill } from "react-icons/ri";
+import { IoMdCheckmark } from "react-icons/io";
+
+
+import { AnimatePresence, motion } from "framer-motion";
 import { useContext, useEffect, useRef, useState } from "react";
 import DataContext from "../contexts/dataContext";
 import Input from "@/components/input/input";
+import Link from "next/link";
 
 const Page = () => {
+  
+  
   const divRefs = useRef([]);
   let {
     query,
@@ -20,6 +31,26 @@ const Page = () => {
     setIsBookMarked,
     setShowModal,
   } = useContext(DataContext);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (showModal === true && !e.target.classList.contains('important')) {
+        console.log(showModal);
+        setShowModal(false);
+      }
+    };
+  
+    if (typeof window !== 'undefined') {
+      document.addEventListener('click', handleClickOutside);
+    }
+  
+    return () => {
+      if (typeof window !== 'undefined') {
+        document.removeEventListener('click', handleClickOutside);
+      }
+    };
+  }, [showModal]);
+  
 
   const [enough, setEnough] = useState(false);
   const maxLength = 300;
@@ -37,7 +68,6 @@ const Page = () => {
   // const [bookmarked, setIsBookMarked] = useState(false);
   const [textHolder, setTextHolder] = useState(false);
   // takes the id of the journal article clicked
-  const [previous, setPrevious] = useState(0);
   const [photos, setPhotos] = useState(undefined);
 
   if (typeof window !== "undefined") {
@@ -56,9 +86,9 @@ const Page = () => {
   }, [showModal]);
 
   // handling second modal
-  const handleSecondModal = () => {
-    setPrevious(null);
-    setShowModal((prev) => !prev);
+  const handleSecondModal = (id) => {
+    setShowModal(true);
+    setEditId(id)
   };
 
   const [divsClicked, setDivsClicked] = useState([]);
@@ -160,9 +190,12 @@ const Page = () => {
   };
 
   // function to handle the display whether pictures or journals or bookmarked
-
+const modalHandle = (id) =>{
+  setEditId(id)
+  setShowModal(true)
+}
   // this function
-  const set = (id, index) => {
+  const set = (index) => {
     if (typeof window !== "undefined") {
       const divToAccess = divRefs.current[index];
       let rect = divToAccess.getBoundingClientRect();
@@ -174,10 +207,9 @@ const Page = () => {
         setIsTop(false);
       }
       //ensures that the subdiv shows up
-      setEditId(id);
+      // setEditId(id);
       // this set the id to keep track of the div clicked
-      setPrevious(id);
-      setShowModal((prev) => !prev);
+      // setShowModal(true);
 
       // if the subdiv is not visible anywhere, show it
       // if (!showModal) {
@@ -208,6 +240,18 @@ const Page = () => {
     <>
       {query && <Input></Input>}
       <div className="container journal-home">
+        {/* {
+          showModal && <div onClick={()=> {
+            setShowModal(false);
+            console.log(showModal);
+          
+          }} className="absolute bg-black/ h-[100vh] z-100 w-[100vw]"></div>
+        } */}
+        
+
+        
+      
+      
         {/* <header className="container fixed-header">
         {isScrolledPast && (
           <div className="wrapper container">
@@ -221,9 +265,11 @@ const Page = () => {
           <div className="plus">+</div>
         </button>
 
-        <div className="container">
+        <div className="container relative">
+        
+        
           <header className="header">
-            <h1>Journal</h1>
+            <Link href='/' className="font-bold text-[40px]">Journal</Link>
             <div className="sort">
               <div className="sorted-info">
                 {bookmarked && (
@@ -235,19 +281,25 @@ const Page = () => {
               </div>
               <div
                 style={{ backgroundColor: bookmarked && "#564fb8" }}
-                onClick={() => handleSecondModal()}
+                onClick={() => handleSecondModal('modal' )}
                 className="three"
               >
                 <div className="first"></div>
                 <div className="second"></div>
                 <div className="third"></div>
               </div>
-              {showModal && previous === null && (
-                <div className="second-modal">
+              {showModal && editId === 'modal' && (
+                <motion.div 
+                initial={{ opacity: 0, scale: 0.5 }} // Initial state: hidden with smaller scale
+                  animate={{ opacity: 1, scale: 1 }}
+                        // Exit state: hidden with smaller scale
+                        transition={{ duration: 0.3 }}
+                        onClick={(e) => e.stopPropagation()}
+                className="second-modal">
                   <div onClick={() => handleAll()} className="all-entries">
                     <div className="name-of">All Entries</div>
                     <div className="icon">
-                      {!bookmarked && !photos && "marked"}
+                      {!bookmarked && !photos && <IoMdCheckmark color="white"/>}
                     </div>
                   </div>
                   {enough && (
@@ -257,17 +309,17 @@ const Page = () => {
                     >
                       <div className="name-of">Bookmarked</div>
                       <div className="icon">
-                        {bookmarked && !photos && "marked"}
+                        {bookmarked && !photos && <IoMdCheckmark color="white"/>}
                       </div>
                     </div>
                   )}
                   <div className="photos">
                     <div className="name-of">Photos</div>
                     <div className="icon">
-                      {!bookmarked && photos && "marked"}
+                      {!bookmarked && photos && <IoMdCheckmark color="white"/>}
                     </div>
                   </div>
-                </div>
+                </motion.div>
               )}
             </div>
           </header>
@@ -281,42 +333,56 @@ const Page = () => {
                     key={index}
                     className="journal "
                   >
-                    {editId === data?.code && showModal && previous != null && (
-                      <div
-                        style={{ top: isTop && "-19%" }}
+                    {editId === data?.code && showModal &&(
+                      <AnimatePresence initial={false}>
+                        <motion.div
+                        initial={{ opacity: 0, scale: 0.5 }} // Initial state: hidden with smaller scale
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.5 }} // Exit state: hidden with smaller scale
+                        transition={{ duration: 0.3 }}
+                        style={{ top: isTop && "-71%" }}
                         className="edit-book-del"
                       >
                         <div
                           onClick={() => editingValue(data.code)}
-                          className="edit-btn"
+                          className="edit-btn flex justify-between"
                         >
-                          <h3>Edit</h3>
-                          <div className="pen"></div>
+                          <h3 className="important">Edit</h3>
+                          <div className="pen">
+                            <RiPencilFill color="white" />
+                          </div>
                         </div>
                         <div
                           onClick={() => bookmark(data.code, data.hasSaved)}
-                          className="bookmark"
+                          className="needed bookmark flex justify-between"
                         >
                           {!data.hasSaved ? (
                             <>
-                              <h3>Bookmark</h3>
-                              <div className="save"></div>
+                              <h3 className="important">Bookmark</h3>
+                              <div className="save">
+                                <GoBookmark />
+                              </div>
                             </>
                           ) : (
                             <>
-                              <h3> Remove Bookmark</h3>
-                              <div className="save"></div>
+                              <h3 className="important">Remove Bookmark</h3>
+                              <div className="save">
+                                <GoBookmarkSlash />
+                              </div>
                             </>
                           )}
                         </div>
                         <div
                           onClick={() => deleting(data.code)}
-                          className="delete"
+                          className="needed delete flex justify-between"
                         >
-                          <h3>Delete</h3>
-                          <div className="bin"></div>
+                          <h3 className="important">Delete</h3>
+                          <div className="bin">
+                            <RiDeleteBin6Line color="red" />
+                          </div>
                         </div>
-                      </div>
+                      </motion.div>
+                      </AnimatePresence>
                     )}
                     <div className="text-itself">
                       <h4>{data.value}</h4>
@@ -325,10 +391,15 @@ const Page = () => {
                       <div className="actual-date">{data.id}</div>
                       <div className="dot-book">
                         {data.hasSaved && (
-                          <div className="bookmarked">booked</div>
+                          <div className="bookmarked">
+                            <FaBookmark color="red" />
+                          </div>
                         )}
                         <div
-                          onClick={() => set(data.code, index)}
+                          onClick={() => {
+                            set(index)
+                            handleSecondModal(data.code)
+                          }}
                           className="edit"
                         >
                           <div className="dott"></div>
@@ -353,45 +424,56 @@ const Page = () => {
                   key={index}
                   className="journal "
                 >
-                  {editId === data?.code && showModal && previous != null && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.5 }} // Initial state: hidden with smaller scale
-                      animate={{ opacity: 1, scale: 1 }} // Final state: visible with normal scale
-                      transition={{ duration: 0.3 }}
-                      style={{ top: isTop && "-19%" }}
-                      className="edit-book-del"
-                    >
-                      <div
-                        onClick={() => editingValue(data.code)}
-                        className="edit-btn"
+                  {editId === data?.code && showModal && (
+                    <AnimatePresence>
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.5 }} // Initial state: hidden with smaller scale
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.5 }} // Exit state: hidden with smaller scale
+                        transition={{ duration: 0.3 }}
+                        style={{ top: isTop && "-75%" }}
+                        className="edit-book-del"
                       >
-                        <h3>Edit</h3>
-                        <div className="pen"></div>
-                      </div>
-                      <div
-                        onClick={() => bookmark(data.code, data.hasSaved)}
-                        className="bookmark"
-                      >
-                        {!data.hasSaved ? (
-                          <>
-                            <h3>Bookmark</h3>
-                            <div className="save"></div>
-                          </>
-                        ) : (
-                          <>
-                            <h3> Remove Bookmark</h3>
-                            <div className="save"></div>
-                          </>
-                        )}
-                      </div>
-                      <div
-                        onClick={() => deleting(data.code)}
-                        className="delete"
-                      >
-                        <h3>Delete</h3>
-                        <div className="bin"></div>
-                      </div>
-                    </motion.div>
+                        <div
+                          onClick={() => editingValue(data.code)}
+                          className="needed edit-btn flex justify-between"
+                        >
+                          <h3 className="important">Edit</h3>
+                          <div className="pen">
+                            <RiPencilFill color="white" />
+                          </div>
+                        </div>
+                        <div
+                          onClick={() => bookmark(data.code, data.hasSaved)}
+                          className="needed bookmark flex justify-between"
+                        >
+                          {!data.hasSaved ? (
+                            <>
+                              <h3 className="important">Bookmark</h3>
+                              <div className="save">
+                                <GoBookmark />
+                              </div>
+                            </>
+                          ) : (
+                            <>
+                              <h3 className="important">Remove Bookmark</h3>
+                              <div className="save">
+                                <GoBookmarkSlash />
+                              </div>
+                            </>
+                          )}
+                        </div>
+                        <div
+                          onClick={() => deleting(data.code)}
+                          className="needed delete flex justify-between"
+                        >
+                          <h3 className="important">Delete</h3>
+                          <div className="bin">
+                            <RiDeleteBin6Line color="red" />
+                          </div>
+                        </div>
+                      </motion.div>
+                    </AnimatePresence>
                   )}
                   <div
                     onClick={() => showText(data.code)}
@@ -410,10 +492,15 @@ const Page = () => {
                     <div className="actual-date">{data.id}</div>
                     <div className="dot-book">
                       {data.hasSaved && (
-                        <div className="bookmarked">booked</div>
+                        <div className="bookmarked">
+                          <FaBookmark color="red" />
+                        </div>
                       )}
                       <div
-                        onClick={() => set(data.code, index)}
+                       onClick={() => {
+                        set(index)
+                        handleSecondModal(data.code)
+                      }}
                         className="edit"
                       >
                         <div className="dott"></div>

@@ -10,9 +10,10 @@ const Home = () => {
   return (
     <>
     {query && <Input></Input>}
-      <div className="container">
+      <div className="container relative">
+      
         <div className="itemswrapper">
-          <h1>Welcome to journal app!</h1>
+          <h1 className="text-[40px]">Welcome to journal app!</h1>
           <h2 className="secondary-text">Home for your thoughts</h2>
           <Link className="link-journal" href='/list'>See your notes</Link>
           <button className="btn" onClick={()=> setQuery(true)}>

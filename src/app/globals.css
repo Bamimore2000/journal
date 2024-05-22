@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root{
   --primaryclr: #564fb8;
 }
@@ -79,7 +83,7 @@ div.button, .btn{
 }
 
 .plus{
-  font-size: 50px;
+  font-size: 43px;
   font-weight: bold;
 }
 
@@ -87,9 +91,8 @@ div.button, .btn{
   position: fixed;
   width: 100%;
   max-width: 768px;
-  transform: translateX(50%);
-  right: 50%;
-  height: 90vh;
+  margin: auto;
+  height: 94vh;
   border-top-right-radius: 20px;
   border-top-left-radius: 20px;
   background-color: rgb(50, 45, 45);
@@ -189,7 +192,7 @@ div.button, .btn{
 .edit-book-del{
   position: absolute;
   background-color: #342e2e;
-  height: 90px;
+  height:auto;
   width: 200px;
   right: 0;
   top:  calc(100% + 5px);
@@ -198,7 +201,7 @@ div.button, .btn{
   flex-direction: column;
   justify-content: space-between;
   z-index: 70 !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: -5px 3px 8px 16px rgba(0, 0, 0, 0.1);
   cursor: pointer;
 }
 
@@ -304,7 +307,6 @@ div.photos{
   background-color: #342e2e;
   padding: 10px;
   width: 200px;
-  transition: all 1s ease-in-out;
   right: 0;
   top:  calc(100% + 5px);
   border-radius: 10px;

@@ -3,8 +3,17 @@ import { useEffect, useState } from "react";
 import { useContext } from "react";
 import DataContext from "@/app/contexts/dataContext";
 import { useRouter } from "next/navigation";
+import { GoBookmark } from "react-icons/go";
+import { RiPencilFill } from "react-icons/ri";
+import { FaBookmark } from "react-icons/fa6";
+import {motion, useDragControls, useMotionValue, useAnimate, easeInOut} from 'framer-motion'
 
 const Input = ({}) => {
+  const controls = useDragControls()
+  const y = useMotionValue(0)
+  const [target, animate] = useAnimate()
+
+  
   // for the input
   const now = new Date();
   const options = {
@@ -69,6 +78,16 @@ const Input = ({}) => {
     showModal,
     setShowModal,
   } = useContext(DataContext);
+
+  const handleClose = () =>{
+    const yStart = typeof y.get() === 'number' ? y.get(): 0;
+    animate(target.current,{
+      y: [yStart, 800]
+    })
+    setQuery(false);
+    setSaver('')
+    
+  }
   
 
   function handleBookmark(){
@@ -165,18 +184,61 @@ const Input = ({}) => {
   };
 
   return (
-    <div className="input ">
+    <motion.div 
+    initial={{
+      y:100,
+      opacity: 0
+    }}
+    animate={{
+      y: 0,
+      opacity: 1
+    }}
+    transition={{
+      ease: easeInOut
+    }}
+    style={{y}}
+    drag='y'
+    dragElastic={{
+      top: 0,
+      bottom: 0.2
+  }}
+  ref={target}
+
+  onDragStart={()=>{
+      console.log(y.get());
+
+  }}
+  onDragEnd={()=>{
+    if (y.get() > 24){
+      handleClose()
+    }
+    console.log(y.get());
+  }}
+  dragListener={false}
+
+  dragControls={controls}
+  dragConstraints={{
+    top: 0,
+    bottom: 0.5
+}}
+     className="input"
+     >
       {isWrong && (
         <div>
           <h3>Please enter a text</h3>
         </div>
       )}
-      <nav>
+      <nav 
+      onPointerDown={(e)=> {
+        controls.start(e);
+        console.log("yes");
+      }}
+      className="cursor-grab touch-none">
         <div onClick={()=> handleBookmark()} className="bookmarkbtn">
           {!wantsBookMarked ? (
-            'set bookmark'
+            <GoBookmark color="rgb(86, 79, 184)"/>
           ):(
-            'remove bookmark'
+            <FaBookmark color="red"/>
           )}
         </div>
         <div className="date">{now.toLocaleString("en-US", options)}</div>
@@ -186,8 +248,8 @@ const Input = ({}) => {
             <div className="dot"></div>
             <div className="dot"></div>
           </div>
-          <div className="done" onClick={() => handleClick()}>
-            {editing ? "Edit" : "Done"}
+          <div style={{color: 'rgb(86, 79, 184)'}} className="done font-bold" onClick={() => handleClick()}>
+            Done
           </div>
         </div>
       </nav>
@@ -199,7 +261,7 @@ const Input = ({}) => {
         placeholder="Start typing"
         type="text"
       />
-    </div>
+    </motion.div>
   );
 };
 export default Input;
