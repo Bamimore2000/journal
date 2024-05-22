@@ -50,6 +50,28 @@ const Page = () => {
       }
     };
   }, [showModal]);
+
+
+  useEffect(()=>{
+    const handleScroll = (e) =>{
+      if (showModal){
+        setShowModal(false)
+      }
+    }
+  
+      if (typeof window !== undefined){
+        window.addEventListener('scroll', handleScroll)
+      }
+  
+      return () => {
+        if (typeof window !== 'undefined') {
+          window.removeEventListener('scroll', handleScroll);
+        }}
+    
+  }, [showModal])
+  
+
+  
   
 
   const [enough, setEnough] = useState(false);
@@ -227,14 +249,9 @@ const modalHandle = (id) =>{
   //   setRender(getItem())
   // }, [se])
   useEffect(() => {
-    getItem()?.map((data) => {
-      if (data.hasSaved) {
-        setEnough(true);
-      } else {
-        setEnough(false);
-      }
-    });
-  }, [query, showModal]);
+    const hasBookmarks = getItem()?.some(item => item.hasSaved);
+    setEnough(hasBookmarks);
+  }, [query, showModal, getItem]);
 
   return (
     <>
